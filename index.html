@@ -61,7 +61,7 @@
         </div>
 
         <div id="admin-gate" class="hidden text-center mt-20 pb-10">
-            <button onclick="showPage('page-admin')" class="text-zinc-800 text-[8px] uppercase tracking-[0.5em]">System_Override_7.1</button>
+            <button onclick="showPage('page-admin')" class="text-blue-900 text-[10px] font-bold uppercase tracking-[0.5em] animate-pulse">--- SYSTEM OVERRIDE 7.1 ---</button>
         </div>
     </div>
 
@@ -94,8 +94,8 @@
             <button onclick="showPage('page-home')" class="glass px-4 py-2 rounded-xl text-xs uppercase font-bold tracking-widest">Exit</button>
         </div>
         <div class="flex gap-2 mb-6">
-            <button onclick="loadWithdrawals()" class="flex-1 bg-white/5 py-2 rounded-lg text-[10px] uppercase font-bold">Withdrawals</button>
-            <button onclick="loadUsers()" class="flex-1 bg-white/5 py-2 rounded-lg text-[10px] uppercase font-bold">Members</button>
+            <button onclick="loadWithdrawals()" class="flex-1 bg-white/5 py-2 rounded-lg text-[10px] uppercase font-bold border border-white/10">Withdrawals</button>
+            <button onclick="loadUsers()" class="flex-1 bg-white/5 py-2 rounded-lg text-[10px] uppercase font-bold border border-white/10">Members</button>
         </div>
         <div id="admin-content" class="space-y-4"></div>
     </div>
@@ -105,7 +105,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const SECRET_ADMIN_PHONE = "0799221290"; 
+        // CONFIG
         const firebaseConfig = {
           apiKey: "AIzaSyDnny6hYrUyf4ltV3yZFk7g2UcdLi4ubnc",
           authDomain: "edtchain-b3488.firebaseapp.com",
@@ -116,46 +116,67 @@
           measurementId: "G-GVSDVCN1QM"
         };
 
+        const SECRET_ADMIN_PHONE = "0000"; // <--- CHANGE TO YOUR PHONE NUMBER
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // NAVIGATION
         window.showPage = (id) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             if(id === 'page-admin') loadWithdrawals();
         };
 
+        // AUTH
         window.authAction = async () => {
             const phone = document.getElementById('user-phone').value;
             const pass = document.getElementById('user-pass').value;
             if(!phone || !pass) return alert("Required");
             const email = phone + "@mbhm.com";
+            
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (e) {
+                // Determine Starting Balance
+                let startBal = 50.00;
+                if(phone === SECRET_ADMIN_PHONE) {
+                    startBal = 1000000.00; // Boss gets a million for testing
+                }
+
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "users", res.user.uid), { phone, balance: 50.00, tasksLeft: 5 });
-                alert("Terminal Sync Complete. $50 Bonus Added.");
+                await setDoc(doc(db, "users", res.user.uid), { 
+                    phone, 
+                    balance: startBal, 
+                    tasksLeft: 5 
+                });
+                alert(phone === SECRET_ADMIN_PHONE ? "Admin Terminal Active" : "Trial Balance Credited.");
             }
         };
 
+        // UI UPDATER
         async function updateUI(uid) {
             const snap = await getDoc(doc(db, "users", uid));
             if(snap.exists()){
                 const d = snap.data();
-                document.getElementById('disp-bal').innerText = "$" + d.balance.toFixed(2);
+                document.getElementById('disp-bal').innerText = "$" + d.balance.toLocaleString(undefined, {minimumFractionDigits: 2});
                 document.getElementById('tasks-left').innerText = (d.tasksLeft ?? 5) + "/5";
-                if(d.phone === SECRET_ADMIN_PHONE) document.getElementById('admin-gate').classList.remove('hidden');
+                
+                if(d.phone === SECRET_ADMIN_PHONE) {
+                    document.getElementById('admin-gate').classList.remove('hidden');
+                }
                 showPage('page-home');
             }
         }
 
+        // TASK ENGINE
         window.startTask = async (name, rate, seconds) => {
             const user = auth.currentUser;
             const userRef = doc(db, "users", user.uid);
             const snap = await getDoc(userRef);
             const tLeft = snap.data().tasksLeft !== undefined ? snap.data().tasksLeft : 5;
+            
             if(tLeft <= 0) return alert("Daily limit reached.");
             
             document.getElementById('task-overlay').classList.remove('hidden');
@@ -177,12 +198,16 @@
             const userRef = doc(db, "users", auth.currentUser.uid);
             const snap = await getDoc(userRef);
             const profit = snap.data().balance * rate;
-            await updateDoc(userRef, { balance: snap.data().balance + profit, tasksLeft: tLeft - 1 });
+            await updateDoc(userRef, { 
+                balance: snap.data().balance + profit, 
+                tasksLeft: tLeft - 1 
+            });
             document.getElementById('task-overlay').classList.add('hidden');
             alert(`Node Successful: +$${profit.toFixed(2)}`);
             updateUI(auth.currentUser.uid);
         }
 
+        // WITHDRAWAL
         window.openWithdraw = () => document.getElementById('modal-withdraw').classList.remove('hidden');
         window.closeWithdraw = () => document.getElementById('modal-withdraw').classList.add('hidden');
 
@@ -198,8 +223,13 @@
             const fee = amt * 0.10, net = amt - fee;
             if(confirm(`Withdrawal Summary:\nGross: $${amt}\nFee: $${fee.toFixed(2)}\nNet: $${net.toFixed(2)}`)) {
                 await updateDoc(userRef, { balance: snap.data().balance - amt });
-                await addDoc(collection(db, "withdrawals"), { phone: snap.data().phone, netPay: net, address: addr, time: new Date().toLocaleString() });
-                alert("Broadcasted to network.");
+                await addDoc(collection(db, "withdrawals"), { 
+                    phone: snap.data().phone, 
+                    netPay: net, 
+                    address: addr, 
+                    time: new Date().toLocaleString() 
+                });
+                alert("Request Pending.");
                 closeWithdraw();
                 updateUI(auth.currentUser.uid);
             }
@@ -228,7 +258,7 @@
             snap.forEach(u => {
                 const d = u.data();
                 container.innerHTML += `<div class="glass p-5 rounded-3xl flex justify-between items-center">
-                    <div class="text-left"><p class="text-blue-500 font-bold text-xs">${d.phone}</p><p class="text-lg font-bold">$${d.balance.toFixed(2)}</p></div>
+                    <div class="text-left"><p class="text-blue-500 font-bold text-xs">${d.phone}</p><p class="text-lg font-bold">$${d.balance.toLocaleString()}</p></div>
                     <div class="flex flex-col gap-2">
                         <button onclick="editBalance('${u.id}', ${d.balance})" class="bg-blue-600/20 text-blue-400 p-2 rounded-xl text-[8px] font-bold">ADJUST</button>
                         <button onclick="deleteUserData('${u.id}')" class="bg-red-600/20 text-red-500 p-2 rounded-xl text-[8px] font-bold">DELETE</button>
