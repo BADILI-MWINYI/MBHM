@@ -3,39 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBHM | Quantification</title>
+    <title>MBHM | Global</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0b0e11; color: #fff; font-family: sans-serif; }
+        .glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        .page { display: none; min-height: 100vh; padding: 20px; }
+        .active { display: block; }
+        input { background: rgba(255,255,255,0.05) !important; color: white !important; }
+    </style>
 </head>
-<body class="bg-black text-white font-sans">
+<body>
 
-    <div id="login-page" class="p-8 text-center pt-20">
-        <h1 class="text-4xl font-bold mb-10 italic text-blue-500">MBHM</h1>
-        <input id="user-id" type="text" placeholder="Phone Number" class="w-full bg-zinc-900 p-4 rounded-xl mb-4 outline-none border border-white/10">
-        <input id="user-pass" type="password" placeholder="Password" class="w-full bg-zinc-900 p-4 rounded-xl mb-8 outline-none border border-white/10">
-        <button onclick="handleLogin()" class="w-full bg-blue-600 py-4 rounded-full font-bold shadow-lg shadow-blue-900/50">Log In / Register</button>
+    <div id="page-login" class="page active pt-20 text-center">
+        <h1 class="text-4xl font-bold mb-10 text-blue-500 italic">MBHM</h1>
+        <div class="space-y-4">
+            <input id="user-phone" type="text" placeholder="Phone Number" class="w-full glass p-4 rounded-2xl outline-none">
+            <input id="user-pass" type="password" placeholder="Password" class="w-full glass p-4 rounded-2xl outline-none">
+            <button onclick="authAction('login')" class="w-full bg-blue-600 py-4 rounded-full font-bold">Login / Register</button>
+        </div>
     </div>
 
-    <div id="home-page" class="hidden p-6">
-        <div class="bg-gradient-to-br from-blue-700 to-blue-900 p-8 rounded-[2rem] shadow-2xl mb-8">
-            <p class="text-xs opacity-70">Total Assets (USDT)</p>
-            <h2 id="balance" class="text-4xl font-bold mt-2">0.00</h2>
+    <div id="page-home" class="page">
+        <div class="glass p-8 rounded-[2.5rem] mb-6 shadow-2xl bg-gradient-to-br from-blue-900/20 to-transparent">
+            <p class="text-xs opacity-50 text-center uppercase tracking-widest">Available Balance</p>
+            <h2 id="disp-bal" class="text-5xl font-bold mt-2 text-center">$0.00</h2>
             <div class="flex gap-4 mt-8">
-                <button class="flex-1 bg-white/20 py-3 rounded-xl backdrop-blur-md">Recharge</button>
-                <button class="flex-1 bg-white text-blue-900 font-bold py-3 rounded-xl">Withdraw</button>
+                <button onclick="alert('Contact Support for Recharge')" class="flex-1 bg-white/10 py-3 rounded-xl border border-white/10">Recharge</button>
+                <button onclick="openWithdraw()" class="flex-1 bg-blue-600 font-bold py-3 rounded-xl shadow-lg shadow-blue-600/30">Withdraw</button>
             </div>
         </div>
-        <button onclick="runTask()" id="task-btn" class="w-full bg-zinc-900 border-2 border-blue-500/30 py-12 rounded-[2rem] text-xl font-bold flex flex-col items-center">
-            <span id="task-icon" class="text-4xl mb-2">🤖</span>
-            <span id="task-text">Start Quantification</span>
+        
+        <button onclick="doTask()" id="task-btn" class="w-full glass py-12 rounded-[2.5rem] flex flex-col items-center border-blue-500/20 border-2">
+            <span id="task-icon" class="text-5xl mb-3">⚡</span>
+            <span id="task-text" class="font-bold text-blue-400">START QUANTIFICATION</span>
         </button>
+
+        <button onclick="showPage('page-admin')" class="mt-20 w-full text-zinc-800 text-xs">Admin Panel</button>
+    </div>
+
+    <div id="modal-withdraw" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center p-6 z-50">
+        <div class="glass w-full max-w-md p-8 rounded-[2rem] border-blue-500/30 border">
+            <h3 class="text-xl font-bold mb-6">Request Withdrawal</h3>
+            <input id="w-address" type="text" placeholder="USDT TRC20 Address" class="w-full glass p-4 rounded-xl mb-4 outline-none">
+            <input id="w-amount" type="number" placeholder="Amount" class="w-full glass p-4 rounded-xl mb-6 outline-none">
+            <div class="flex gap-4">
+                <button onclick="closeWithdraw()" class="flex-1 text-gray-400">Cancel</button>
+                <button onclick="submitWithdraw()" class="flex-1 bg-blue-600 py-3 rounded-xl font-bold">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-admin" class="page">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">Withdrawal Requests</h2>
+            <button onclick="showPage('page-home')" class="text-blue-500">Back</button>
+        </div>
+        <div id="withdraw-list" class="space-y-4">
+            </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- FIXED FIREBASE CONFIG ---
+        // --- PASTE YOUR CONFIG HERE ---
         const firebaseConfig = {
           apiKey: "AIzaSyDnny6hYrUyf4ltV3yZFk7g2UcdLi4ubnc",
           authDomain: "edtchain-b3488.firebaseapp.com",
@@ -45,58 +78,110 @@
           appId: "1:274106741884:web:b41d6dfabeaac8f3a205f9",
           measurementId: "G-GVSDVCN1QM"
         };
-        // ------------------------------
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // LOGIN / REGISTER LOGIC
-        window.handleLogin = async () => {
-            const phone = document.getElementById('user-id').value;
+        // NAVIGATION
+        window.showPage = (id) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'page-admin') loadWithdrawals();
+        };
+
+        // AUTH
+        window.authAction = async (type) => {
+            const phone = document.getElementById('user-phone').value;
             const pass = document.getElementById('user-pass').value;
-            const email = phone + "@edt.com";
-
-            if(!phone || !pass) return alert("Fill all fields");
-
+            const email = phone + "@mbhm.com";
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (e) {
-                // If user doesn't exist, register them
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "users", res.user.uid), { balance: 50.00, phone: phone });
-                alert("Welcome! Bonus $50 added.");
+                await setDoc(doc(db, "users", res.user.uid), { phone, balance: 50.00 });
+                alert("Account Created! Bonus $50 added.");
             }
         };
 
-        // TASK LOGIC
-        window.runTask = async () => {
+        // WITHDRAWAL LOGIC
+        window.openWithdraw = () => document.getElementById('modal-withdraw').classList.remove('hidden');
+        window.closeWithdraw = () => document.getElementById('modal-withdraw').classList.add('hidden');
+
+        window.submitWithdraw = async () => {
+            const addr = document.getElementById('w-address').value;
+            const amt = parseFloat(document.getElementById('w-amount').value);
+            const user = auth.currentUser;
+
+            const userRef = doc(db, "users", user.uid);
+            const snap = await getDoc(userRef);
+            
+            if(snap.data().balance < amt) return alert("Insufficient balance");
+
+            // 1. Deduct money
+            await updateDoc(userRef, { balance: snap.data().balance - amt });
+
+            // 2. Create request for Admin
+            await addDoc(collection(db, "withdrawals"), {
+                uid: user.uid,
+                phone: snap.data().phone,
+                amount: amt,
+                address: addr,
+                status: "Pending",
+                time: new Date().toLocaleString()
+            });
+
+            alert("Request Submitted!");
+            closeWithdraw();
+            updateUI(user.uid);
+        };
+
+        // ADMIN: LOAD WITHDRAWALS
+        async function loadWithdrawals() {
+            const list = document.getElementById('withdraw-list');
+            list.innerHTML = "Loading...";
+            const snap = await getDocs(collection(db, "withdrawals"));
+            list.innerHTML = "";
+            snap.forEach(doc => {
+                const data = doc.data();
+                list.innerHTML += `
+                    <div class="glass p-4 rounded-xl flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-bold text-blue-400">${data.phone}</p>
+                            <p class="text-xs opacity-50">${data.address}</p>
+                            <p class="text-lg font-bold mt-1">$${data.amount}</p>
+                        </div>
+                        <button onclick="deleteRequest('${doc.id}')" class="bg-red-500/20 text-red-500 p-2 rounded-lg text-xs">Clear</button>
+                    </div>
+                `;
+            });
+        }
+
+        window.deleteRequest = async (id) => {
+            await deleteDoc(doc(db, "withdrawals", id));
+            loadWithdrawals();
+        };
+
+        // TASK & UI
+        window.doTask = async () => {
             const btn = document.getElementById('task-btn');
             const txt = document.getElementById('task-text');
-            txt.innerText = "Quantifying Assets...";
-            btn.disabled = true;
-
+            txt.innerText = "Analyzing...";
             setTimeout(async () => {
-                const user = auth.currentUser;
-                const ref = doc(db, "users", user.uid);
+                const ref = doc(db, "users", auth.currentUser.uid);
                 const snap = await getDoc(ref);
-                const profit = snap.data().balance * 0.03; // 3% profit
-                
-                await updateDoc(ref, { balance: snap.data().balance + profit });
-                alert("Task Complete! Profit: +$" + profit.toFixed(2));
-                txt.innerText = "Start Quantification";
-                btn.disabled = false;
-                updateUI(user.uid);
-            }, 4000);
+                const p = snap.data().balance * 0.05;
+                await updateDoc(ref, { balance: snap.data().balance + p });
+                txt.innerText = "START QUANTIFICATION";
+                alert("Profit: +$" + p.toFixed(2));
+                updateUI(auth.currentUser.uid);
+            }, 3000);
         };
 
         async function updateUI(uid) {
             const snap = await getDoc(doc(db, "users", uid));
-            if(snap.exists()) {
-                document.getElementById('balance').innerText = snap.data().balance.toFixed(2);
-                document.getElementById('login-page').style.display = 'none';
-                document.getElementById('home-page').style.display = 'block';
-            }
+            document.getElementById('disp-bal').innerText = "$" + snap.data().balance.toFixed(2);
+            showPage('page-home');
         }
 
         onAuthStateChanged(auth, (u) => { if(u) updateUI(u.uid); });
