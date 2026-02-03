@@ -1,64 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBHM | Global</title>
+    <title>MBHM | Smart Quantification</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0b0e11; color: #fff; font-family: sans-serif; }
+        body { background: #0b0e11; color: #fff; font-family: sans-serif; overflow-x: hidden; }
         .glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
         .page { display: none; min-height: 100vh; padding: 20px; }
         .active { display: block; }
-        input { background: rgba(255,255,255,0.05) !important; color: white !important; }
+        .node-card { transition: all 0.3s ease; }
+        .node-card:active { scale: 0.98; opacity: 0.8; }
+        input { background: rgba(255,255,255,0.05) !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; }
     </style>
 </head>
 <body>
 
     <div id="page-login" class="page active pt-20 text-center">
-        <h1 class="text-4xl font-bold mb-10 text-blue-500 italic">MBHM</h1>
-        <div class="space-y-4">
+        <h1 class="text-5xl font-extrabold mb-2 text-blue-500 italic italic">MBHM</h1>
+        <p class="text-xs opacity-40 mb-10 tracking-[0.3em]">QUANTUM ALGORITHM</p>
+        <div class="space-y-4 max-w-sm mx-auto">
             <input id="user-phone" type="text" placeholder="Phone Number" class="w-full glass p-4 rounded-2xl outline-none">
             <input id="user-pass" type="password" placeholder="Password" class="w-full glass p-4 rounded-2xl outline-none">
-            <button onclick="authAction('login')" class="w-full bg-blue-600 py-4 rounded-full font-bold">Login / Register</button>
+            <button onclick="authAction()" class="w-full bg-blue-600 py-4 rounded-full font-bold shadow-lg shadow-blue-600/20">Access Terminal</button>
         </div>
     </div>
 
     <div id="page-home" class="page">
-        <div class="glass p-8 rounded-[2.5rem] mb-6 shadow-2xl bg-gradient-to-br from-blue-900/20 to-transparent">
-            <p class="text-xs opacity-50 text-center uppercase tracking-widest">Available Balance</p>
+        <div class="glass p-8 rounded-[2.5rem] mb-6 shadow-2xl bg-gradient-to-br from-blue-900/20 to-transparent border-blue-500/20">
+            <p class="text-[10px] opacity-50 text-center uppercase tracking-widest">Global Balance (USDT)</p>
             <h2 id="disp-bal" class="text-5xl font-bold mt-2 text-center">$0.00</h2>
             <div class="flex gap-4 mt-8">
-                <button onclick="alert('Contact Support for Recharge')" class="flex-1 bg-white/10 py-3 rounded-xl border border-white/10">Recharge</button>
-                <button onclick="openWithdraw()" class="flex-1 bg-blue-600 font-bold py-3 rounded-xl shadow-lg shadow-blue-600/30">Withdraw</button>
+                <button onclick="alert('Contact Admin for Recharge Wallet Address')" class="flex-1 bg-white/5 py-3 rounded-xl border border-white/10 text-xs font-bold uppercase">Recharge</button>
+                <button onclick="openWithdraw()" class="flex-1 bg-blue-600 font-bold py-3 rounded-xl shadow-lg shadow-blue-600/30 text-xs uppercase">Withdraw</button>
             </div>
         </div>
-        
-        <button onclick="doTask()" id="task-btn" class="w-full glass py-12 rounded-[2.5rem] flex flex-col items-center border-blue-500/20 border-2">
-            <span id="task-icon" class="text-5xl mb-3">⚡</span>
-            <span id="task-text" class="font-bold text-blue-400">START QUANTIFICATION</span>
-        </button>
 
-        <button onclick="showPage('page-admin')" class="mt-20 w-full text-zinc-800 text-xs">Admin Panel</button>
+        <div class="flex justify-between items-center mb-4 px-2">
+            <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Available Nodes</span>
+            <div class="bg-blue-600/20 px-3 py-1 rounded-full border border-blue-500/30">
+                <span id="tasks-left" class="text-blue-400 font-bold">5/5</span>
+                <span class="text-[8px] text-blue-400 opacity-60 uppercase ml-1">Daily Limit</span>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-blue-500">
+                <div>
+                    <p class="font-bold text-sm">Standard Node V1</p>
+                    <p class="text-[10px] text-gray-500">30s | Profit: 0.5%</p>
+                </div>
+                <button onclick="startTask('Standard', 0.005, 30)" class="bg-blue-600/20 text-blue-400 border border-blue-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Deploy</button>
+            </div>
+
+            <div class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-purple-500">
+                <div>
+                    <p class="font-bold text-sm">Advanced Node V2</p>
+                    <p class="text-[10px] text-gray-500">2m | Profit: 1.2%</p>
+                </div>
+                <button onclick="startTask('Advanced', 0.012, 120)" class="bg-purple-600/20 text-purple-400 border border-purple-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Deploy</button>
+            </div>
+
+            <div class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-yellow-500">
+                <div>
+                    <p class="font-bold text-sm">Neural Compute V3</p>
+                    <p class="text-[10px] text-gray-500">5m | Profit: 2.5%</p>
+                </div>
+                <button onclick="startTask('Neural', 0.025, 300)" class="bg-yellow-600/20 text-yellow-400 border border-yellow-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Deploy</button>
+            </div>
+        </div>
+
+        <div id="admin-gate" class="hidden">
+            <button onclick="showPage('page-admin')" class="mt-20 w-full text-zinc-900 text-[8px] uppercase tracking-[0.5em] py-10">System_Override_7.1</button>
+        </div>
     </div>
 
-    <div id="modal-withdraw" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center p-6 z-50">
-        <div class="glass w-full max-w-md p-8 rounded-[2rem] border-blue-500/30 border">
-            <h3 class="text-xl font-bold mb-6">Request Withdrawal</h3>
-            <input id="w-address" type="text" placeholder="USDT TRC20 Address" class="w-full glass p-4 rounded-xl mb-4 outline-none">
-            <input id="w-amount" type="number" placeholder="Amount" class="w-full glass p-4 rounded-xl mb-6 outline-none">
+    <div id="modal-withdraw" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center p-6 z-50 backdrop-blur-md">
+        <div class="glass w-full max-w-md p-8 rounded-[2.5rem] border-blue-500/30 border">
+            <h3 class="text-xl font-bold mb-6 text-center">Withdraw Assets</h3>
+            <p class="text-[10px] opacity-40 mb-4 text-center">NETWORK: USDT TRC20</p>
+            <input id="w-address" type="text" placeholder="Paste Wallet Address" class="w-full glass p-4 rounded-xl mb-4 outline-none">
+            <input id="w-amount" type="number" placeholder="Enter Amount" class="w-full glass p-4 rounded-xl mb-6 outline-none">
             <div class="flex gap-4">
-                <button onclick="closeWithdraw()" class="flex-1 text-gray-400">Cancel</button>
-                <button onclick="submitWithdraw()" class="flex-1 bg-blue-600 py-3 rounded-xl font-bold">Submit</button>
+                <button onclick="closeWithdraw()" class="flex-1 text-gray-500 text-sm">Cancel</button>
+                <button onclick="submitWithdraw()" class="flex-1 bg-blue-600 py-4 rounded-2xl font-bold text-sm">Confirm</button>
             </div>
         </div>
+    </div>
+
+    <div id="task-overlay" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col items-center justify-center p-10 text-center">
+        <div class="relative w-40 h-40 mb-8">
+            <div class="absolute inset-0 border-4 border-blue-500/10 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center font-mono text-2xl text-blue-400" id="timer">00:00</div>
+        </div>
+        <h2 id="task-title" class="text-xl font-bold mb-2 tracking-widest uppercase">Initializing Node...</h2>
+        <p class="text-[10px] text-gray-500 max-w-xs uppercase leading-relaxed tracking-widest">Encrypted quantification in progress. Do not disconnect from the server.</p>
     </div>
 
     <div id="page-admin" class="page">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold">Withdrawal Requests</h2>
-            <button onclick="showPage('page-home')" class="text-blue-500">Back</button>
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="text-2xl font-bold text-red-500">Admin Console</h2>
+            <button onclick="showPage('page-home')" class="glass px-4 py-2 rounded-xl text-xs">Exit</button>
         </div>
+        <h3 class="text-[10px] opacity-50 mb-4 uppercase tracking-widest">Pending Withdrawals</h3>
         <div id="withdraw-list" class="space-y-4">
             </div>
     </div>
@@ -68,7 +114,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- PASTE YOUR CONFIG HERE ---
+        // CONFIGURATION
         const firebaseConfig = {
           apiKey: "AIzaSyDnny6hYrUyf4ltV3yZFk7g2UcdLi4ubnc",
           authDomain: "edtchain-b3488.firebaseapp.com",
@@ -78,6 +124,8 @@
           appId: "1:274106741884:web:b41d6dfabeaac8f3a205f9",
           measurementId: "G-GVSDVCN1QM"
         };
+
+        const SECRET_ADMIN_PHONE = "YOUR_PHONE_HERE"; // Change this to your login phone
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -91,20 +139,83 @@
         };
 
         // AUTH
-        window.authAction = async (type) => {
+        window.authAction = async () => {
             const phone = document.getElementById('user-phone').value;
             const pass = document.getElementById('user-pass').value;
+            if(!phone || !pass) return alert("Fill all fields");
             const email = phone + "@mbhm.com";
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (e) {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
-                await setDoc(doc(db, "users", res.user.uid), { phone, balance: 50.00 });
-                alert("Account Created! Bonus $50 added.");
+                await setDoc(doc(db, "users", res.user.uid), { phone, balance: 50.00, tasksLeft: 5 });
+                alert("Terminal Sync Complete. $50 Credit Added.");
             }
         };
 
-        // WITHDRAWAL LOGIC
+        // UI UPDATER
+        async function updateUI(uid) {
+            const snap = await getDoc(doc(db, "users", uid));
+            if(snap.exists()){
+                const data = snap.data();
+                document.getElementById('disp-bal').innerText = "$" + data.balance.toFixed(2);
+                document.getElementById('tasks-left').innerText = (data.tasksLeft ?? 5) + "/5";
+                
+                // Show Secret Admin Gate
+                if(data.phone === SECRET_ADMIN_PHONE) {
+                    document.getElementById('admin-gate').classList.remove('hidden');
+                }
+                
+                showPage('page-home');
+            }
+        }
+
+        // TASK ENGINE
+        window.startTask = async (name, rate, seconds) => {
+            const user = auth.currentUser;
+            const userRef = doc(db, "users", user.uid);
+            const snap = await getDoc(userRef);
+            const tLeft = snap.data().tasksLeft !== undefined ? snap.data().tasksLeft : 5;
+
+            if(tLeft <= 0) return alert("Daily energy depleted. Wait 24h.");
+
+            const overlay = document.getElementById('task-overlay');
+            const timerDisplay = document.getElementById('timer');
+            const titleDisplay = document.getElementById('task-title');
+            
+            overlay.classList.remove('hidden');
+            titleDisplay.innerText = name + " Mining...";
+            
+            let timeLeft = seconds;
+            const countdown = setInterval(() => {
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                timerDisplay.innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    finishTask(rate, tLeft);
+                }
+            }, 1000);
+        };
+
+        async function finishTask(rate, tLeft) {
+            const userRef = doc(db, "users", auth.currentUser.uid);
+            const snap = await getDoc(userRef);
+            const profit = snap.data().balance * rate;
+            
+            await updateDoc(userRef, { 
+                balance: snap.data().balance + profit,
+                tasksLeft: tLeft - 1 
+            });
+
+            document.getElementById('task-overlay').classList.add('hidden');
+            alert(`Quantification Successful: +$${profit.toFixed(2)}`);
+            updateUI(auth.currentUser.uid);
+        }
+
+        // WITHDRAWAL
         window.openWithdraw = () => document.getElementById('modal-withdraw').classList.remove('hidden');
         window.closeWithdraw = () => document.getElementById('modal-withdraw').classList.add('hidden');
 
@@ -112,77 +223,51 @@
             const addr = document.getElementById('w-address').value;
             const amt = parseFloat(document.getElementById('w-amount').value);
             const user = auth.currentUser;
-
             const userRef = doc(db, "users", user.uid);
             const snap = await getDoc(userRef);
             
-            if(snap.data().balance < amt) return alert("Insufficient balance");
+            if(snap.data().balance < amt) return alert("Insufficient Credit");
 
-            // 1. Deduct money
             await updateDoc(userRef, { balance: snap.data().balance - amt });
-
-            // 2. Create request for Admin
             await addDoc(collection(db, "withdrawals"), {
-                uid: user.uid,
                 phone: snap.data().phone,
                 amount: amt,
                 address: addr,
-                status: "Pending",
                 time: new Date().toLocaleString()
             });
 
-            alert("Request Submitted!");
+            alert("Request broadcasted to network.");
             closeWithdraw();
             updateUI(user.uid);
         };
 
-        // ADMIN: LOAD WITHDRAWALS
+        // ADMIN LOADER
         async function loadWithdrawals() {
             const list = document.getElementById('withdraw-list');
-            list.innerHTML = "Loading...";
+            list.innerHTML = `<div class="p-10 text-center opacity-20">Scanning Database...</div>`;
             const snap = await getDocs(collection(db, "withdrawals"));
             list.innerHTML = "";
-            snap.forEach(doc => {
-                const data = doc.data();
+            snap.forEach(d => {
+                const data = d.data();
                 list.innerHTML += `
-                    <div class="glass p-4 rounded-xl flex justify-between items-center">
+                    <div class="glass p-5 rounded-3xl flex justify-between items-center border border-white/5">
                         <div>
-                            <p class="text-sm font-bold text-blue-400">${data.phone}</p>
-                            <p class="text-xs opacity-50">${data.address}</p>
-                            <p class="text-lg font-bold mt-1">$${data.amount}</p>
+                            <p class="text-blue-500 font-bold text-xs">${data.phone}</p>
+                            <p class="text-[9px] opacity-40 mb-2 truncate w-40">${data.address}</p>
+                            <p class="text-xl font-bold">$${data.amount}</p>
                         </div>
-                        <button onclick="deleteRequest('${doc.id}')" class="bg-red-500/20 text-red-500 p-2 rounded-lg text-xs">Clear</button>
+                        <button onclick="deleteRequest('${d.id}')" class="bg-red-500/10 text-red-500 p-3 rounded-2xl text-[10px] uppercase font-bold">Clear</button>
                     </div>
                 `;
             });
         }
 
         window.deleteRequest = async (id) => {
-            await deleteDoc(doc(db, "withdrawals", id));
-            loadWithdrawals();
+            if(confirm("Confirm payment sent?")) {
+                await deleteDoc(doc(db, "withdrawals", id));
+                loadWithdrawals();
+            }
         };
-
-        // TASK & UI
-        window.doTask = async () => {
-            const btn = document.getElementById('task-btn');
-            const txt = document.getElementById('task-text');
-            txt.innerText = "Analyzing...";
-            setTimeout(async () => {
-                const ref = doc(db, "users", auth.currentUser.uid);
-                const snap = await getDoc(ref);
-                const p = snap.data().balance * 0.05;
-                await updateDoc(ref, { balance: snap.data().balance + p });
-                txt.innerText = "START QUANTIFICATION";
-                alert("Profit: +$" + p.toFixed(2));
-                updateUI(auth.currentUser.uid);
-            }, 3000);
-        };
-
-        async function updateUI(uid) {
-            const snap = await getDoc(doc(db, "users", uid));
-            document.getElementById('disp-bal').innerText = "$" + snap.data().balance.toFixed(2);
-            showPage('page-home');
-        }
 
         onAuthStateChanged(auth, (u) => { if(u) updateUI(u.uid); });
     </script>
