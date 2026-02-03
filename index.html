@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBHM | Quantification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white font-sans">
+
+    <div id="login-page" class="p-8 text-center pt-20">
+        <h1 class="text-4xl font-bold mb-10 italic text-blue-500">MBHM</h1>
+        <input id="user-id" type="text" placeholder="Phone Number" class="w-full bg-zinc-900 p-4 rounded-xl mb-4 outline-none border border-white/10">
+        <input id="user-pass" type="password" placeholder="Password" class="w-full bg-zinc-900 p-4 rounded-xl mb-8 outline-none border border-white/10">
+        <button onclick="handleLogin()" class="w-full bg-blue-600 py-4 rounded-full font-bold shadow-lg shadow-blue-900/50">Log In / Register</button>
+    </div>
+
+    <div id="home-page" class="hidden p-6">
+        <div class="bg-gradient-to-br from-blue-700 to-blue-900 p-8 rounded-[2rem] shadow-2xl mb-8">
+            <p class="text-xs opacity-70">Total Assets (USDT)</p>
+            <h2 id="balance" class="text-4xl font-bold mt-2">0.00</h2>
+            <div class="flex gap-4 mt-8">
+                <button class="flex-1 bg-white/20 py-3 rounded-xl backdrop-blur-md">Recharge</button>
+                <button class="flex-1 bg-white text-blue-900 font-bold py-3 rounded-xl">Withdraw</button>
+            </div>
+        </div>
+        <button onclick="runTask()" id="task-btn" class="w-full bg-zinc-900 border-2 border-blue-500/30 py-12 rounded-[2rem] text-xl font-bold flex flex-col items-center">
+            <span id="task-icon" class="text-4xl mb-2">🤖</span>
+            <span id="task-text">Start Quantification</span>
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- FIXED FIREBASE CONFIG ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyDnny6hYrUyf4ltV3yZFk7g2UcdLi4ubnc",
+          authDomain: "edtchain-b3488.firebaseapp.com",
+          projectId: "edtchain-b3488",
+          storageBucket: "edtchain-b3488.firebasestorage.app",
+          messagingSenderId: "274106741884",
+          appId: "1:274106741884:web:b41d6dfabeaac8f3a205f9",
+          measurementId: "G-GVSDVCN1QM"
+        };
+        // ------------------------------
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // LOGIN / REGISTER LOGIC
+        window.handleLogin = async () => {
+            const phone = document.getElementById('user-id').value;
+            const pass = document.getElementById('user-pass').value;
+            const email = phone + "@edt.com";
+
+            if(!phone || !pass) return alert("Fill all fields");
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (e) {
+                // If user doesn't exist, register them
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", res.user.uid), { balance: 50.00, phone: phone });
+                alert("Welcome! Bonus $50 added.");
+            }
+        };
+
+        // TASK LOGIC
+        window.runTask = async () => {
+            const btn = document.getElementById('task-btn');
+            const txt = document.getElementById('task-text');
+            txt.innerText = "Quantifying Assets...";
+            btn.disabled = true;
+
+            setTimeout(async () => {
+                const user = auth.currentUser;
+                const ref = doc(db, "users", user.uid);
+                const snap = await getDoc(ref);
+                const profit = snap.data().balance * 0.03; // 3% profit
+                
+                await updateDoc(ref, { balance: snap.data().balance + profit });
+                alert("Task Complete! Profit: +$" + profit.toFixed(2));
+                txt.innerText = "Start Quantification";
+                btn.disabled = false;
+                updateUI(user.uid);
+            }, 4000);
+        };
+
+        async function updateUI(uid) {
+            const snap = await getDoc(doc(db, "users", uid));
+            if(snap.exists()) {
+                document.getElementById('balance').innerText = snap.data().balance.toFixed(2);
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('home-page').style.display = 'block';
+            }
+        }
+
+        onAuthStateChanged(auth, (u) => { if(u) updateUI(u.uid); });
+    </script>
+</body>
+</html>
