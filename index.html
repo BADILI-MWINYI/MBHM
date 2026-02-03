@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBHM | Smart Quantification</title>
+    <title>MBHM | Global Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #0b0e11; color: #fff; font-family: sans-serif; overflow-x: hidden; }
@@ -32,13 +32,13 @@
             <p class="text-[10px] opacity-50 uppercase tracking-widest">Available Balance</p>
             <h2 id="disp-bal" class="text-5xl font-bold mt-2">$0.00</h2>
             <div class="flex gap-4 mt-8">
-                <button onclick="alert('Contact Admin for Recharge')" class="flex-1 bg-white/5 py-3 rounded-xl border border-white/10 text-[10px] font-bold uppercase">Recharge</button>
+                <button onclick="alert('Contact Admin to Recharge')" class="flex-1 bg-white/5 py-3 rounded-xl border border-white/10 text-[10px] font-bold uppercase">Recharge</button>
                 <button onclick="openWithdraw()" class="flex-1 bg-blue-600 font-bold py-3 rounded-xl shadow-lg shadow-blue-600/30 text-[10px] uppercase">Withdraw</button>
             </div>
         </div>
 
         <div class="flex justify-between items-center mb-4 px-2">
-            <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Active Mining Nodes</span>
+            <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Mining Nodes</span>
             <div class="bg-blue-600/20 px-3 py-1 rounded-full border border-blue-500/30 flex items-center gap-2">
                 <span id="tasks-left" class="text-blue-400 font-bold text-sm">5/5</span>
                 <span class="text-[8px] text-blue-400 opacity-60 uppercase">Daily Limit</span>
@@ -47,26 +47,15 @@
 
         <div class="space-y-4">
             <div class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-blue-500">
-                <div>
-                    <p class="font-bold text-sm">Standard Node V1</p>
-                    <p class="text-[10px] text-gray-500">Duration: 30s | Yield: 0.5%</p>
-                </div>
+                <div><p class="font-bold text-sm">Standard V1</p><p class="text-[10px] text-gray-500">30s | Yield: 0.5%</p></div>
                 <button onclick="startTask('Standard', 0.005, 30)" class="bg-blue-600/20 text-blue-400 border border-blue-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Deploy</button>
             </div>
-
             <div class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-purple-500">
-                <div>
-                    <p class="font-bold text-sm">Advanced Node V2</p>
-                    <p class="text-[10px] text-gray-500">Duration: 2m | Yield: 1.2%</p>
-                </div>
+                <div><p class="font-bold text-sm">Advanced V2</p><p class="text-[10px] text-gray-500">2m | Yield: 1.2%</p></div>
                 <button onclick="startTask('Advanced', 0.012, 120)" class="bg-purple-600/20 text-purple-400 border border-purple-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Deploy</button>
             </div>
-
             <div class="node-card glass p-5 rounded-3xl flex items-center justify-between border-l-4 border-yellow-500">
-                <div>
-                    <p class="font-bold text-sm">Neural Compute V3</p>
-                    <p class="text-[10px] text-gray-500">Duration: 5m | Yield: 2.5%</p>
-                </div>
+                <div><p class="font-bold text-sm">Neural V3</p><p class="text-[10px] text-gray-500">5m | Yield: 2.5%</p></div>
                 <button onclick="startTask('Neural', 0.025, 300)" class="bg-yellow-600/20 text-yellow-400 border border-yellow-600/30 px-6 py-2 rounded-full text-[10px] font-bold uppercase">Deploy</button>
             </div>
         </div>
@@ -78,10 +67,10 @@
 
     <div id="modal-withdraw" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center p-6 z-50 backdrop-blur-md">
         <div class="glass w-full max-w-md p-8 rounded-[2.5rem] border-blue-500/30 border">
-            <h3 class="text-xl font-bold mb-6 text-center">Withdraw Assets</h3>
-            <p class="text-[10px] opacity-40 mb-4 text-center">NETWORK: USDT TRC20</p>
-            <input id="w-address" type="text" placeholder="Paste Wallet Address" class="w-full glass p-4 rounded-xl mb-4 outline-none">
-            <input id="w-amount" type="number" placeholder="Enter Amount" class="w-full glass p-4 rounded-xl mb-6 outline-none">
+            <h3 class="text-xl font-bold mb-2 text-center">Withdraw Assets</h3>
+            <p class="text-[10px] text-yellow-500/80 mb-6 text-center uppercase">Min: $100.00 | Fee: 10%</p>
+            <input id="w-address" type="text" placeholder="USDT TRC20 Address" class="w-full glass p-4 rounded-xl mb-4 outline-none">
+            <input id="w-amount" type="number" placeholder="Amount" class="w-full glass p-4 rounded-xl mb-6 outline-none">
             <div class="flex gap-4">
                 <button onclick="closeWithdraw()" class="flex-1 text-gray-500 text-sm">Cancel</button>
                 <button onclick="submitWithdraw()" class="flex-1 bg-blue-600 py-4 rounded-2xl font-bold text-sm">Confirm</button>
@@ -95,8 +84,8 @@
             <div class="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
             <div class="absolute inset-0 flex items-center justify-center font-mono text-2xl text-blue-400" id="timer">00:00</div>
         </div>
-        <h2 id="task-title" class="text-xl font-bold mb-2 tracking-widest uppercase">Initializing Node...</h2>
-        <p class="text-[10px] text-gray-500 max-w-xs uppercase leading-relaxed tracking-widest">AI Quantification in progress. Do not close the terminal.</p>
+        <h2 id="task-title" class="text-xl font-bold mb-2 uppercase text-blue-500 tracking-widest">Syncing...</h2>
+        <p class="text-[10px] text-gray-500 uppercase tracking-widest leading-relaxed">Quantification in progress. Do not close browser.</p>
     </div>
 
     <div id="page-admin" class="page">
@@ -104,7 +93,6 @@
             <h2 class="text-2xl font-bold text-red-500">Admin Console</h2>
             <button onclick="showPage('page-home')" class="glass px-4 py-2 rounded-xl text-xs uppercase font-bold tracking-widest">Exit</button>
         </div>
-        <h3 class="text-[10px] opacity-50 mb-4 uppercase tracking-widest">Pending Withdrawals</h3>
         <div id="withdraw-list" class="space-y-4"></div>
     </div>
 
@@ -113,6 +101,7 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // CONFIG FROM USER
         const firebaseConfig = {
           apiKey: "AIzaSyDnny6hYrUyf4ltV3yZFk7g2UcdLi4ubnc",
           authDomain: "edtchain-b3488.firebaseapp.com",
@@ -123,7 +112,7 @@
           measurementId: "G-GVSDVCN1QM"
         };
 
-        const SECRET_ADMIN_PHONE = "0799221290"; // Change this to your login phone number
+        const SECRET_ADMIN_PHONE = "0799221290"; // REPLACE WITH YOUR NUMBER
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -138,27 +127,24 @@
         window.authAction = async () => {
             const phone = document.getElementById('user-phone').value;
             const pass = document.getElementById('user-pass').value;
-            if(!phone || !pass) return alert("All fields required");
+            if(!phone || !pass) return alert("Required");
             const email = phone + "@mbhm.com";
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (e) {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 await setDoc(doc(db, "users", res.user.uid), { phone, balance: 50.00, tasksLeft: 5 });
-                alert("Terminal Sync Complete. $50 Credit Added.");
+                alert("Terminal Sync Complete. $50 Bonus Added.");
             }
         };
 
         async function updateUI(uid) {
             const snap = await getDoc(doc(db, "users", uid));
             if(snap.exists()){
-                const data = snap.data();
-                document.getElementById('disp-bal').innerText = "$" + data.balance.toFixed(2);
-                document.getElementById('tasks-left').innerText = (data.tasksLeft ?? 5) + "/5";
-                
-                if(data.phone === SECRET_ADMIN_PHONE) {
-                    document.getElementById('admin-gate').classList.remove('hidden');
-                }
+                const d = snap.data();
+                document.getElementById('disp-bal').innerText = "$" + d.balance.toFixed(2);
+                document.getElementById('tasks-left').innerText = (d.tasksLeft ?? 5) + "/5";
+                if(d.phone === SECRET_ADMIN_PHONE) document.getElementById('admin-gate').classList.remove('hidden');
                 showPage('page-home');
             }
         }
@@ -168,23 +154,16 @@
             const userRef = doc(db, "users", user.uid);
             const snap = await getDoc(userRef);
             const tLeft = snap.data().tasksLeft !== undefined ? snap.data().tasksLeft : 5;
-
-            if(tLeft <= 0) return alert("Daily energy depleted.");
-
-            const overlay = document.getElementById('task-overlay');
-            const timerDisplay = document.getElementById('timer');
-            const titleDisplay = document.getElementById('task-title');
+            if(tLeft <= 0) return alert("Daily limit reached.");
             
-            overlay.classList.remove('hidden');
-            titleDisplay.innerText = name + " Mining...";
+            document.getElementById('task-overlay').classList.remove('hidden');
+            document.getElementById('task-title').innerText = name + " Mining...";
             
             let timeLeft = seconds;
             const countdown = setInterval(() => {
                 timeLeft--;
-                let m = Math.floor(timeLeft / 60);
-                let s = timeLeft % 60;
-                timerDisplay.innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                
+                let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
                     finishTask(rate, tLeft);
@@ -196,14 +175,9 @@
             const userRef = doc(db, "users", auth.currentUser.uid);
             const snap = await getDoc(userRef);
             const profit = snap.data().balance * rate;
-            
-            await updateDoc(userRef, { 
-                balance: snap.data().balance + profit,
-                tasksLeft: tLeft - 1 
-            });
-
+            await updateDoc(userRef, { balance: snap.data().balance + profit, tasksLeft: tLeft - 1 });
             document.getElementById('task-overlay').classList.add('hidden');
-            alert(`Quantification Successful: +$${profit.toFixed(2)}`);
+            alert(`Node Successful: +$${profit.toFixed(2)}`);
             updateUI(auth.currentUser.uid);
         }
 
@@ -213,50 +187,38 @@
         window.submitWithdraw = async () => {
             const addr = document.getElementById('w-address').value;
             const amt = parseFloat(document.getElementById('w-amount').value);
-            const user = auth.currentUser;
-            const userRef = doc(db, "users", user.uid);
+            const userRef = doc(db, "users", auth.currentUser.uid);
             const snap = await getDoc(userRef);
             
-            if(snap.data().balance < amt) return alert("Insufficient Credit");
+            if(amt < 100) return alert("Minimum withdrawal is $100.00");
+            if(snap.data().balance < amt) return alert("Insufficient balance");
 
-            await updateDoc(userRef, { balance: snap.data().balance - amt });
-            await addDoc(collection(db, "withdrawals"), {
-                phone: snap.data().phone,
-                amount: amt,
-                address: addr,
-                time: new Date().toLocaleString()
-            });
-
-            alert("Request submitted.");
-            closeWithdraw();
-            updateUI(user.uid);
+            const fee = amt * 0.10, net = amt - fee;
+            if(confirm(`Withdrawal Summary:\nGross: $${amt}\nFee: $${fee.toFixed(2)}\nNet: $${net.toFixed(2)}`)) {
+                await updateDoc(userRef, { balance: snap.data().balance - amt });
+                await addDoc(collection(db, "withdrawals"), { phone: snap.data().phone, netPay: net, address: addr, time: new Date().toLocaleString() });
+                alert("Broadcasted to network.");
+                closeWithdraw();
+                updateUI(auth.currentUser.uid);
+            }
         };
 
         async function loadWithdrawals() {
             const list = document.getElementById('withdraw-list');
-            list.innerHTML = `<p class="opacity-20 text-center">Syncing...</p>`;
+            list.innerHTML = `<p class="opacity-20 text-center">Scanning...</p>`;
             const snap = await getDocs(collection(db, "withdrawals"));
             list.innerHTML = "";
             snap.forEach(d => {
                 const data = d.data();
-                list.innerHTML += `
-                    <div class="glass p-5 rounded-3xl flex justify-between items-center">
-                        <div>
-                            <p class="text-blue-500 font-bold text-xs">${data.phone}</p>
-                            <p class="text-[9px] opacity-40 truncate w-40">${data.address}</p>
-                            <p class="text-xl font-bold">$${data.amount}</p>
-                        </div>
-                        <button onclick="deleteRequest('${d.id}')" class="bg-red-500/10 text-red-500 p-3 rounded-2xl text-[10px] font-bold">CLEAR</button>
-                    </div>
-                `;
+                list.innerHTML += `<div class="glass p-5 rounded-3xl flex justify-between items-center border border-white/5">
+                    <div class="text-left"><p class="text-blue-500 font-bold text-xs">${data.phone}</p><p class="text-[9px] opacity-40 truncate w-40">${data.address}</p><p class="text-lg font-bold">SEND: $${data.netPay.toFixed(2)}</p></div>
+                    <button onclick="deleteRequest('${d.id}')" class="bg-red-500/10 text-red-500 p-3 rounded-2xl text-[10px] font-bold">CLEAR</button>
+                </div>`;
             });
         }
 
         window.deleteRequest = async (id) => {
-            if(confirm("Confirm payment sent?")) {
-                await deleteDoc(doc(db, "withdrawals", id));
-                loadWithdrawals();
-            }
+            if(confirm("Confirm PAID?")) { await deleteDoc(doc(db, "withdrawals", id)); loadWithdrawals(); }
         };
 
         onAuthStateChanged(auth, (u) => { if(u) updateUI(u.uid); });
