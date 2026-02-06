@@ -1,29 +1,31 @@
 <!DOCTYPE html>
-<html lang="en"><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBHM Kenya | Quant Terminal</title>
+    <title>MBHM | Kenya Quantitative Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { background: #0b0e11; color: #e2e8f0; font-family: 'Inter', sans-serif; padding-bottom: 90px; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         .glass { background: rgba(23, 27, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); }
+        
+        /* Navigation Logic */
         .page { display: none; min-height: 100vh; animation: fadeIn 0.3s ease-out; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .active-page { display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .mining-gradient { background: linear-gradient(90deg, #22c55e 0%, #10b981 100%); }
     </style>
 </head>
 <body>
 
-    <div id="page-task" class="page active p-4">
+    <div id="page-market" class="page active-page p-4">
         <header class="mb-6 pt-4 flex justify-between items-end">
             <div>
                 <h1 class="text-2xl font-800 tracking-tighter text-green-500 italic">MBHM</h1>
-                <p class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Market Operations</p>
+                <p class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Neural Node Active</p>
             </div>
             <div class="text-right">
                 <p class="text-[10px] text-gray-500 font-bold uppercase">Trading Bal</p>
@@ -31,12 +33,16 @@
             </div>
         </header>
 
-        <section class="glass rounded-2xl p-3 mb-6 flex justify-between items-center">
-            <span class="text-[8px] font-bold text-gray-500 uppercase">Live BTC/KES</span>
-            <span class="text-[10px] text-green-500 mono" id="btc-ticker">12,450,210.00</span>
+        <section class="glass rounded-2xl p-4 mb-6">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-[8px] font-bold text-gray-500 uppercase">Live BTC/KES Spread</span>
+                <span class="text-[10px] text-green-500 mono font-bold" id="btc-ticker">12,450,210.00</span>
+            </div>
+            <div class="h-[1px] w-full bg-gray-800 relative overflow-hidden"><div class="absolute inset-0 bg-green-500/20 animate-pulse"></div></div>
         </section>
 
         <div class="space-y-4">
+            <h3 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Available Operations</h3>
             <div class="glass p-5 rounded-3xl border-l-4 border-green-500">
                 <div class="flex justify-between items-center mb-4">
                     <div>
@@ -45,188 +51,114 @@
                     </div>
                     <p class="text-sm font-black text-green-400">+0.85%</p>
                 </div>
-                <button onclick="simulateSync()" class="w-full mining-gradient py-4 rounded-xl text-xs font-black text-black uppercase">Execute Sync</button>
-            </div>
-            
-            <h3 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest pt-4">Operational History</h3>
-            <div id="history-list" class="space-y-2">
-                <div class="glass p-3 rounded-xl flex justify-between text-[10px]">
-                    <span class="text-gray-400 uppercase">Settlement 0x442...</span>
-                    <span class="text-green-500 font-bold">+ KES 42.10</span>
-                </div>
+                <button onclick="executeTask()" class="w-full mining-gradient py-4 rounded-xl text-xs font-black text-black uppercase">Execute Sync</button>
             </div>
         </div>
     </div>
 
     <div id="page-recharge" class="page p-4">
         <h2 class="text-xl font-800 mb-6 pt-4">Recharge Capital</h2>
-        <div class="glass p-6 rounded-[2.5rem] mb-6">
-            <p class="text-[10px] text-gray-500 uppercase font-bold mb-4">M-Pesa Paybill</p>
-            <p class="text-xs text-gray-400 mb-1">Business No: <span class="text-white font-bold mono">400200</span></p>
-            <p class="text-xs text-gray-400">Account No: <span class="text-white font-bold mono">882910</span></p>
+        <div class="glass p-6 rounded-[2.5rem] mb-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6 opacity-10 text-4xl">KE</div>
+            <h2 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6">M-Pesa Paybill Method</h2>
+            <div class="space-y-4">
+                <div>
+                    <p class="text-[9px] text-gray-500 uppercase font-bold">Business Number</p>
+                    <p class="text-xl font-black mono text-white">400200</p>
+                </div>
+                <div>
+                    <p class="text-[9px] text-gray-500 uppercase font-bold">Account Number</p>
+                    <p class="text-xl font-black mono text-white">882910</p>
+                </div>
+            </div>
         </div>
         <div class="glass p-6 rounded-[2.5rem] border border-blue-500/20">
-            <input type="text" placeholder="M-Pesa Ref Code" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl outline-none mb-4 text-white mono text-sm">
-            <button class="w-full bg-blue-600 py-4 rounded-xl font-black text-xs uppercase">Submit Reference</button>
+            <h3 class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-4">Confirm Settlement</h3>
+            <input type="text" id="mpesa-ref" placeholder="Example: SBR129XJ82" class="w-full bg-black/40 border border-white/10 p-4 rounded-2xl outline-none mb-4 text-white mono">
+            <button onclick="submitRef()" class="w-full bg-blue-600 py-4 rounded-xl font-black text-xs uppercase shadow-lg shadow-blue-900/40">Sync Deposit</button>
         </div>
     </div>
 
-    <div id="page-account" class="page p-4 text-center">
-        <div class="w-20 h-20 bg-green-500/20 rounded-3xl mx-auto mb-4 mt-10 flex items-center justify-center text-3xl">👤</div>
-        <h2 class="text-xl font-800">0722 *** 456</h2>
-        <p class="text-[10px] text-green-500 font-bold uppercase tracking-widest">Verified Node</p>
-        
-        <div class="mt-8 space-y-3 text-left">
-            <div class="glass p-4 rounded-2xl flex justify-between items-center" onclick="showPage('page-recharge')">
-                <span class="text-xs font-bold">Financial History</span>
-                <span class="text-gray-600">❯</span>
-            </div>
-            <div class="glass p-4 rounded-2xl flex justify-between items-center text-red-500">
-                <span class="text-xs font-bold">Log Out</span>
-                <span>🚪</span>
+    <div id="page-account" class="page p-4">
+        <div class="flex items-center gap-4 mb-8 pt-6">
+            <div class="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center text-2xl">👤</div>
+            <div>
+                <h2 class="text-xl font-800" id="user-display">0722 *** 456</h2>
+                <span class="bg-green-500/10 text-green-500 text-[9px] px-2 py-0.5 rounded-full font-bold uppercase">Verified Node</span>
             </div>
         </div>
+        <div class="glass p-6 rounded-[2rem] border-b-2 border-green-500 mb-6">
+            <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Total Vault Assets</p>
+            <h3 class="text-3xl font-black mono text-white">KES 5,450.00</h3>
+        </div>
+        <button onclick="logout()" class="w-full glass p-4 rounded-2xl text-red-500 text-xs font-bold uppercase">Disconnect Node (Logout)</button>
     </div>
 
     <nav class="fixed bottom-0 left-0 right-0 glass border-t border-white/5 p-4 flex justify-around items-center z-50">
-        <button onclick="showPage('page-task')" class="nav-btn text-green-500" id="btn-task">
+        <button onclick="switchTab('page-market')" class="nav-btn text-green-500 text-center" id="nav-market">
             <p class="text-xl">📊</p>
             <p class="text-[8px] font-bold uppercase">Market</p>
         </button>
-        <button onclick="showPage('page-recharge')" class="nav-btn text-gray-500" id="btn-recharge">
+        <button onclick="switchTab('page-recharge')" class="nav-btn text-gray-500 text-center" id="nav-recharge">
             <p class="text-xl">💰</p>
             <p class="text-[8px] font-bold uppercase">Deposit</p>
         </button>
-        <button onclick="showPage('page-account')" class="nav-btn text-gray-500" id="btn-account">
+        <button onclick="switchTab('page-account')" class="nav-btn text-gray-500 text-center" id="nav-account">
             <p class="text-xl">👤</p>
             <p class="text-[8px] font-bold uppercase">Account</p>
         </button>
     </nav>
 
-    <div id="sync-overlay" class="hidden fixed inset-0 bg-[#0b0e11]/98 z-[100] flex flex-col items-center justify-center p-8">
-        <div class="w-24 h-24 border-t-2 border-green-500 rounded-full animate-spin mb-4"></div>
+    <div id="sync-overlay" class="hidden fixed inset-0 bg-[#0b0e11]/98 z-[100] flex flex-col items-center justify-center">
+        <div class="w-20 h-20 border-t-2 border-green-500 rounded-full animate-spin mb-4"></div>
         <p class="text-green-500 mono font-bold" id="sync-pct">0%</p>
-        <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-2">Neural Syncing...</p>
+        <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-2">Neural Arbitrage in progress...</p>
     </div>
 
     <script>
-        function showPage(pageId) {
+        // NAVIGATION LOGIC
+        function switchTab(pageId) {
             // Hide all pages
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // Show selected page
-            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            // Show the one we want
+            document.getElementById(pageId).classList.add('active-page');
             
-            // Update Nav colors
+            // Reset nav colors
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-green-500', 'text-gray-500'));
-            const activeBtnId = 'btn-' + pageId.split('-')[1];
-            document.getElementById(activeBtnId).classList.replace('text-gray-500', 'text-green-500');
+            // Highlight active nav
+            const btnId = 'nav-' + pageId.split('-')[1];
+            document.getElementById(btnId).classList.replace('text-gray-500', 'text-green-500');
         }
 
-        function simulateSync() {
+        // TASK LOGIC
+        function executeTask() {
             const overlay = document.getElementById('sync-overlay');
             const pctEl = document.getElementById('sync-pct');
             overlay.classList.remove('hidden');
             let pct = 0;
             const timer = setInterval(() => {
-                pct += 5;
+                pct += 2;
                 pctEl.innerText = pct + "%";
                 if(pct >= 100) {
                     clearInterval(timer);
                     overlay.classList.add('hidden');
-                    alert("Sync Successful! KES 46.20 added to balance.");
+                    alert("Settlement Successful! Profit added to your balance.");
                 }
-            }, 100);
+            }, 50);
         }
 
-        // Ticker
+        function submitRef() {
+            const code = document.getElementById('mpesa-ref').value;
+            if(code) alert("Reference " + code + " submitted for verification.");
+        }
+
+        // TICKER SIMULATION
         setInterval(() => {
             const el = document.getElementById('btc-ticker');
             let p = parseFloat(el.innerText.replace(/,/g, ''));
-            p += (Math.random() * 100 - 50);
-            el.innerText = p.toLocaleString(undefined, {minimumFractionDigits:2});
+            p += (Math.random() * 200 - 100);
+            el.innerText = p.toLocaleString(undefined, {minimumFractionDigits: 2});
         }, 2000);
-    </script>
-</body>
-</html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBHM | Recharge Node</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        body { background: #0b0e11; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .glass { background: rgba(23, 27, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); }
-        .mpesa-green { color: #2fb45a; }
-        .bg-mpesa { background: #2fb45a; }
-        .step-circle { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; items-center; justify-center; font-size: 10px; font-weight: bold; }
-    </style>
-</head>
-<body class="p-4 pb-12">
-
-    <div class="flex items-center gap-4 mb-8 pt-4">
-        <button onclick="history.back()" class="text-gray-500 text-xl">←</button>
-        <h1 class="text-xl font-800 tracking-tight">Recharge Capital</h1>
-    </div>
-
-    <div class="glass p-6 rounded-[2.5rem] mb-6 relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-6 opacity-10 text-6xl">🇰🇪</div>
-        
-        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">M-Pesa Paybill Method</h2>
-        
-        <div class="space-y-6">
-            <div class="flex items-start gap-4">
-                <div class="step-circle mt-1">1</div>
-                <div>
-                    <p class="text-[10px] text-gray-500 uppercase font-bold">Business Number</p>
-                    <p class="text-2xl font-black mono text-white">400200</p>
-                </div>
-            </div>
-
-            <div class="flex items-start gap-4">
-                <div class="step-circle mt-1">2</div>
-                <div>
-                    <p class="text-[10px] text-gray-500 uppercase font-bold">Account Number</p>
-                    <p class="text-2xl font-black mono text-white">882910</p>
-                </div>
-            </div>
-
-            <div class="flex items-start gap-4 border-t border-white/5 pt-6">
-                <div class="step-circle mt-1">3</div>
-                <p class="text-xs text-gray-400 leading-relaxed">
-                    Enter the amount you wish to trade with. After payment, you will receive a confirmation SMS from M-Pesa.
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <div class="glass p-6 rounded-[2.5rem] border border-blue-500/20">
-        <h3 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4">Confirm Settlement</h3>
-        <p class="text-[10px] text-gray-500 mb-6">Paste your M-Pesa Transaction Code below to sync your funds instantly.</p>
-        
-        <div class="space-y-4">
-            <input type="text" id="m-pesa-code" placeholder="Example: SBR129XJ82" class="w-full bg-black/40 border border-white/10 p-5 rounded-2xl outline-none focus:border-blue-500 mono text-white placeholder:text-gray-700">
-            
-            <button onclick="submitRecharge()" class="w-full bg-blue-600 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-blue-900/40">Sync Deposit</button>
-        </div>
-    </div>
-
-    <div class="mt-8 text-center p-4">
-        <p class="text-[10px] text-gray-600">Encountered an issue?</p>
-        <button class="text-green-500 text-[10px] font-bold uppercase mt-1">Contact Node Support (WhatsApp)</button>
-    </div>
-
-    <script>
-        function submitRecharge() {
-            const code = document.getElementById('m-pesa-code').value;
-            if(code.length < 8) {
-                alert("Please enter a valid M-Pesa Transaction Code.");
-                return;
-            }
-            // In the final version, this will save to the "recharges" collection in Firebase
-            alert("Verification Sent! Your node balance will update as soon as the block is confirmed.");
-        }
     </script>
 </body>
 </html>
