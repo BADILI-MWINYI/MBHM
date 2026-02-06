@@ -1,5 +1,153 @@
 <!DOCTYPE html>
+<html lang="en"><!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBHM Kenya | Quant Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #0b0e11; color: #e2e8f0; font-family: 'Inter', sans-serif; padding-bottom: 90px; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass { background: rgba(23, 27, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); }
+        .page { display: none; min-height: 100vh; animation: fadeIn 0.3s ease-out; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .mining-gradient { background: linear-gradient(90deg, #22c55e 0%, #10b981 100%); }
+    </style>
+</head>
+<body>
+
+    <div id="page-task" class="page active p-4">
+        <header class="mb-6 pt-4 flex justify-between items-end">
+            <div>
+                <h1 class="text-2xl font-800 tracking-tighter text-green-500 italic">MBHM</h1>
+                <p class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Market Operations</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] text-gray-500 font-bold uppercase">Trading Bal</p>
+                <h2 class="text-2xl font-bold mono">KES 5,450.00</h2>
+            </div>
+        </header>
+
+        <section class="glass rounded-2xl p-3 mb-6 flex justify-between items-center">
+            <span class="text-[8px] font-bold text-gray-500 uppercase">Live BTC/KES</span>
+            <span class="text-[10px] text-green-500 mono" id="btc-ticker">12,450,210.00</span>
+        </section>
+
+        <div class="space-y-4">
+            <div class="glass p-5 rounded-3xl border-l-4 border-green-500">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h4 class="font-bold text-white">Neural Arbitrage L1</h4>
+                        <p class="text-[10px] text-gray-500">KES/USDT Liquidity Bridge</p>
+                    </div>
+                    <p class="text-sm font-black text-green-400">+0.85%</p>
+                </div>
+                <button onclick="simulateSync()" class="w-full mining-gradient py-4 rounded-xl text-xs font-black text-black uppercase">Execute Sync</button>
+            </div>
+            
+            <h3 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest pt-4">Operational History</h3>
+            <div id="history-list" class="space-y-2">
+                <div class="glass p-3 rounded-xl flex justify-between text-[10px]">
+                    <span class="text-gray-400 uppercase">Settlement 0x442...</span>
+                    <span class="text-green-500 font-bold">+ KES 42.10</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-recharge" class="page p-4">
+        <h2 class="text-xl font-800 mb-6 pt-4">Recharge Capital</h2>
+        <div class="glass p-6 rounded-[2.5rem] mb-6">
+            <p class="text-[10px] text-gray-500 uppercase font-bold mb-4">M-Pesa Paybill</p>
+            <p class="text-xs text-gray-400 mb-1">Business No: <span class="text-white font-bold mono">400200</span></p>
+            <p class="text-xs text-gray-400">Account No: <span class="text-white font-bold mono">882910</span></p>
+        </div>
+        <div class="glass p-6 rounded-[2.5rem] border border-blue-500/20">
+            <input type="text" placeholder="M-Pesa Ref Code" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl outline-none mb-4 text-white mono text-sm">
+            <button class="w-full bg-blue-600 py-4 rounded-xl font-black text-xs uppercase">Submit Reference</button>
+        </div>
+    </div>
+
+    <div id="page-account" class="page p-4 text-center">
+        <div class="w-20 h-20 bg-green-500/20 rounded-3xl mx-auto mb-4 mt-10 flex items-center justify-center text-3xl">👤</div>
+        <h2 class="text-xl font-800">0722 *** 456</h2>
+        <p class="text-[10px] text-green-500 font-bold uppercase tracking-widest">Verified Node</p>
+        
+        <div class="mt-8 space-y-3 text-left">
+            <div class="glass p-4 rounded-2xl flex justify-between items-center" onclick="showPage('page-recharge')">
+                <span class="text-xs font-bold">Financial History</span>
+                <span class="text-gray-600">❯</span>
+            </div>
+            <div class="glass p-4 rounded-2xl flex justify-between items-center text-red-500">
+                <span class="text-xs font-bold">Log Out</span>
+                <span>🚪</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 glass border-t border-white/5 p-4 flex justify-around items-center z-50">
+        <button onclick="showPage('page-task')" class="nav-btn text-green-500" id="btn-task">
+            <p class="text-xl">📊</p>
+            <p class="text-[8px] font-bold uppercase">Market</p>
+        </button>
+        <button onclick="showPage('page-recharge')" class="nav-btn text-gray-500" id="btn-recharge">
+            <p class="text-xl">💰</p>
+            <p class="text-[8px] font-bold uppercase">Deposit</p>
+        </button>
+        <button onclick="showPage('page-account')" class="nav-btn text-gray-500" id="btn-account">
+            <p class="text-xl">👤</p>
+            <p class="text-[8px] font-bold uppercase">Account</p>
+        </button>
+    </nav>
+
+    <div id="sync-overlay" class="hidden fixed inset-0 bg-[#0b0e11]/98 z-[100] flex flex-col items-center justify-center p-8">
+        <div class="w-24 h-24 border-t-2 border-green-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-green-500 mono font-bold" id="sync-pct">0%</p>
+        <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-2">Neural Syncing...</p>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update Nav colors
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-green-500', 'text-gray-500'));
+            const activeBtnId = 'btn-' + pageId.split('-')[1];
+            document.getElementById(activeBtnId).classList.replace('text-gray-500', 'text-green-500');
+        }
+
+        function simulateSync() {
+            const overlay = document.getElementById('sync-overlay');
+            const pctEl = document.getElementById('sync-pct');
+            overlay.classList.remove('hidden');
+            let pct = 0;
+            const timer = setInterval(() => {
+                pct += 5;
+                pctEl.innerText = pct + "%";
+                if(pct >= 100) {
+                    clearInterval(timer);
+                    overlay.classList.add('hidden');
+                    alert("Sync Successful! KES 46.20 added to balance.");
+                }
+            }, 100);
+        }
+
+        // Ticker
+        setInterval(() => {
+            const el = document.getElementById('btc-ticker');
+            let p = parseFloat(el.innerText.replace(/,/g, ''));
+            p += (Math.random() * 100 - 50);
+            el.innerText = p.toLocaleString(undefined, {minimumFractionDigits:2});
+        }, 2000);
+    </script>
+</body>
+</html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
