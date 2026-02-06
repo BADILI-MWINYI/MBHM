@@ -3,250 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBHM | Quantum Arbitrage Terminal</title>
+    <title>MBHM | Recharge Node</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { background: #06080a; color: #e2e8f0; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); }
-        .page { display: none; min-height: 100vh; padding: 15px; }
-        .active { display: block; }
-        .node-card { transition: 0.3s; border: 1px solid rgba(59, 130, 246, 0.1); }
-        .locked { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
-        input { background: rgba(255,255,255,0.05) !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; }
-        @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .scanning-text { font-family: monospace; color: #3b82f6; animation: pulse-soft 1s infinite; }
+        body { background: #0b0e11; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass { background: rgba(23, 27, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); }
+        .mpesa-green { color: #2fb45a; }
+        .bg-mpesa { background: #2fb45a; }
+        .step-circle { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; items-center; justify-center; font-size: 10px; font-weight: bold; }
     </style>
 </head>
-<body>
+<body class="p-4 pb-12">
 
-    <div id="page-login" class="page active flex flex-col items-center justify-center">
-        <div class="w-full max-w-sm text-center">
-            <div class="mb-8">
-                <h1 class="text-6xl font-black text-blue-500 italic tracking-tighter">MBHM</h1>
-                <p class="text-[9px] text-blue-300/50 tracking-[0.5em] font-bold uppercase mt-2">Neural Quant System v4.2</p>
-            </div>
-            <div class="space-y-3">
-                <input id="user-phone" type="text" placeholder="Phone Number" class="w-full glass p-5 rounded-2xl outline-none">
-                <input id="user-pass" type="password" placeholder="Secure Key (Min 6 chars)" class="w-full glass p-5 rounded-2xl outline-none">
-                <button id="auth-btn" onclick="authAction()" class="w-full bg-blue-600 hover:bg-blue-500 py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-blue-900/20">Initialize Sync</button>
-            </div>
-            <p id="auth-msg" class="mt-4 text-[10px] text-blue-400/50 uppercase"></p>
-        </div>
+    <div class="flex items-center gap-4 mb-8 pt-4">
+        <button onclick="history.back()" class="text-gray-500 text-xl">←</button>
+        <h1 class="text-xl font-800 tracking-tight">Recharge Capital</h1>
     </div>
 
-    <div id="page-home" class="page">
-        <div class="glass p-8 rounded-[2rem] mb-6 border-b-2 border-blue-500/30">
-            <div class="flex justify-between items-start mb-4">
-                <div class="text-left">
-                    <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Active Liquidity</p>
-                    <h2 id="disp-bal" class="text-4xl font-bold mt-1 tracking-tight text-white">$0.00</h2>
-                </div>
-                <div class="bg-blue-500/10 p-2 rounded-lg border border-blue-500/20 text-center">
-                    <p class="text-[8px] text-blue-400 font-bold uppercase">Network</p>
-                    <p class="text-[10px] text-green-400 font-mono animate-pulse">LIVE</p>
-                </div>
-            </div>
-            <div class="flex gap-3">
-                <button onclick="window.open('https://wa.me/YOUR_NUMBER', '_blank')" class="flex-1 bg-white/5 py-4 rounded-xl border border-white/10 text-[10px] font-bold uppercase">Recharge</button>
-                <button onclick="openWithdraw()" class="flex-1 bg-blue-600 py-4 rounded-xl text-[10px] font-bold uppercase shadow-lg shadow-blue-600/20">Withdraw</button>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <div class="glass p-4 rounded-2xl text-center">
-                <p class="text-[8px] text-gray-500 uppercase">Quant Slots</p>
-                <p id="tasks-left" class="text-lg font-bold text-blue-400">5/5</p>
-            </div>
-            <div class="glass p-4 rounded-2xl text-center">
-                <p class="text-[8px] text-gray-500 uppercase">Node Level</p>
-                <p id="node-level-text" class="text-lg font-bold text-green-400">V1</p>
-            </div>
-        </div>
-
-        <div class="space-y-4" id="node-container">
-            <div id="node-1" class="node-card glass p-6 rounded-3xl flex items-center justify-between">
+    <div class="glass p-6 rounded-[2.5rem] mb-6 relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-6 opacity-10 text-6xl">🇰🇪</div>
+        
+        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">M-Pesa Paybill Method</h2>
+        
+        <div class="space-y-6">
+            <div class="flex items-start gap-4">
+                <div class="step-circle mt-1">1</div>
                 <div>
-                    <h4 class="font-bold text-blue-400 text-sm">Basic-AI L1</h4>
-                    <p class="text-[10px] text-gray-500">Min $10 | 0.5% - 0.8%</p>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold">Business Number</p>
+                    <p class="text-2xl font-black mono text-white">400200</p>
                 </div>
-                <button onclick="startTask('Basic-AI L1', 0.006, 15, 10)" class="bg-blue-600/20 text-blue-400 border border-blue-500/30 px-6 py-3 rounded-2xl text-[10px] font-black">SYNC</button>
             </div>
-            <div id="node-2" class="node-card glass p-6 rounded-3xl flex items-center justify-between">
+
+            <div class="flex items-start gap-4">
+                <div class="step-circle mt-1">2</div>
                 <div>
-                    <h4 class="font-bold text-purple-400 text-sm">Neural-Grid L2</h4>
-                    <p class="text-[10px] text-gray-500">Min $500 | 1.5% - 2.2%</p>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold">Account Number</p>
+                    <p class="text-2xl font-black mono text-white">882910</p>
                 </div>
-                <button onclick="startTask('Neural-Grid L2', 0.018, 45, 500)" class="bg-purple-600/20 text-purple-400 border border-purple-500/30 px-6 py-3 rounded-2xl text-[10px] font-black">SYNC</button>
+            </div>
+
+            <div class="flex items-start gap-4 border-t border-white/5 pt-6">
+                <div class="step-circle mt-1">3</div>
+                <p class="text-xs text-gray-400 leading-relaxed">
+                    Enter the amount you wish to trade with. After payment, you will receive a confirmation SMS from M-Pesa.
+                </p>
             </div>
         </div>
-
-        <div id="admin-gate" class="hidden text-center mt-20 pb-20">
-            <button onclick="showPage('page-admin')" class="text-zinc-800 text-[8px] font-bold uppercase tracking-[0.5em]">System_Root</button>
-        </div>
     </div>
 
-    <div id="modal-withdraw" class="hidden fixed inset-0 bg-black/95 flex items-center justify-center p-6 z-50">
-        <div class="glass w-full max-w-md p-8 rounded-[2.5rem]">
-            <h3 class="text-xl font-bold mb-6 text-center">Funds Transfer</h3>
-            <input id="w-address" type="text" placeholder="USDT TRC20 Address" class="w-full glass p-5 rounded-xl mb-4 outline-none">
-            <input id="w-amount" type="number" placeholder="Amount ($100 Min)" class="w-full glass p-5 rounded-xl mb-6 outline-none">
-            <button onclick="submitWithdraw()" class="w-full bg-blue-600 py-4 rounded-xl font-bold text-[10px] uppercase mb-4">Confirm Transfer</button>
-            <button onclick="closeWithdraw()" class="w-full text-gray-500 text-[10px] font-bold uppercase">Cancel</button>
-        </div>
-    </div>
-
-    <div id="task-overlay" class="hidden fixed inset-0 bg-[#06080a] z-[100] flex flex-col items-center justify-center p-10">
-        <div class="relative w-40 h-40 mb-10">
-            <div class="absolute inset-0 border-2 border-blue-500/10 rounded-full"></div>
-            <div class="absolute inset-0 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <div class="absolute inset-0 flex items-center justify-center font-mono text-2xl text-blue-400" id="timer">00:00</div>
-        </div>
-        <h2 id="task-title" class="text-lg font-bold text-white mb-4 uppercase tracking-widest italic">Syncing...</h2>
-        <div id="trade-log" class="w-full max-w-xs glass p-4 rounded-xl h-24 overflow-hidden text-[9px] font-mono text-blue-400/60 leading-relaxed"></div>
-    </div>
-
-    <div id="page-admin" class="page">
-        <div class="flex justify-between items-center mb-10">
-            <h2 class="text-xl font-bold text-red-500 uppercase">Control Center</h2>
-            <button onclick="showPage('page-home')" class="glass px-4 py-2 rounded-xl text-[10px] font-bold uppercase">Exit</button>
-        </div>
-        <div id="admin-content" class="space-y-4"></div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyDnny6hYrUyf4ltV3yZFk7g2UcdLi4ubnc",
-          authDomain: "edtchain-b3488.firebaseapp.com",
-          projectId: "edtchain-b3488",
-          storageBucket: "edtchain-b3488.firebasestorage.app",
-          messagingSenderId: "274106741884",
-          appId: "1:274106741884:web:b41d6dfabeaac8f3a205f9"
-        };
-
-        const SECRET_ADMIN_PHONE = "0000"; // SET THIS TO YOUR NUMBER
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        window.showPage = (id) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        };
-
-        window.authAction = async () => {
-            const phone = document.getElementById('user-phone').value.trim();
-            const pass = document.getElementById('user-pass').value;
-            const msg = document.getElementById('auth-msg');
-
-            if(phone.length < 8 || pass.length < 6) {
-                return alert("Valid phone and 6-digit key required.");
-            }
-
-            msg.innerText = "Connecting to Satellite...";
-            const email = phone + "@mbhm.com";
-
-            try {
-                // Try Login
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                if (err.code === 'auth/user-not-found') {
-                    // Try Register if user doesn't exist
-                    try {
-                        const res = await createUserWithEmailAndPassword(auth, email, pass);
-                        let role = (phone === SECRET_ADMIN_PHONE) ? "admin" : "member";
-                        let startBal = (role === "admin") ? 0 : 50.00;
-
-                        await setDoc(doc(db, "users", res.user.uid), { 
-                            phone, balance: startBal, tasksLeft: 5, role: role 
-                        });
-                        alert("Account Created! $50 Trial Bonus Added.");
-                    } catch (regErr) {
-                        alert("Registration Error: " + regErr.message);
-                    }
-                } else {
-                    alert("Auth Error: " + err.message);
-                }
-            }
-            msg.innerText = "";
-        };
-
-        async function updateUI(uid) {
-            const snap = await getDoc(doc(db, "users", uid));
-            if(snap.exists()){
-                const d = snap.data();
-                const balEl = document.getElementById('disp-bal');
-                
-                if(d.role === "admin") {
-                    balEl.innerText = "SYSTEM_ROOT";
-                    document.getElementById('admin-gate').classList.remove('hidden');
-                } else {
-                    balEl.innerText = "$" + d.balance.toLocaleString(undefined, {minimumFractionDigits: 2});
-                    document.getElementById('node-level-text').innerText = d.balance >= 500 ? "V2" : "V1";
-                }
-                
-                document.getElementById('tasks-left').innerText = (d.tasksLeft ?? 5) + "/5";
-                document.getElementById('node-2').classList.toggle('locked', d.balance < 500);
-                showPage('page-home');
-            }
-        }
-
-        window.startTask = async (name, rate, seconds, minReq) => {
-            const userRef = doc(db, "users", auth.currentUser.uid);
-            const snap = await getDoc(userRef);
-            const d = snap.data();
-
-            if(d.balance < minReq) return alert("Higher Liquidity Level Required.");
-            if((d.tasksLeft ?? 5) <= 0) return alert("Daily slots exhausted.");
+    <div class="glass p-6 rounded-[2.5rem] border border-blue-500/20">
+        <h3 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4">Confirm Settlement</h3>
+        <p class="text-[10px] text-gray-500 mb-6">Paste your M-Pesa Transaction Code below to sync your funds instantly.</p>
+        
+        <div class="space-y-4">
+            <input type="text" id="m-pesa-code" placeholder="Example: SBR129XJ82" class="w-full bg-black/40 border border-white/10 p-5 rounded-2xl outline-none focus:border-blue-500 mono text-white placeholder:text-gray-700">
             
-            document.getElementById('task-overlay').classList.remove('hidden');
-            document.getElementById('task-title').innerText = name;
-            
-            let timeLeft = seconds;
-            const logBox = document.getElementById('trade-log');
-            logBox.innerHTML = "<p>> Scanning Market...</p>";
+            <button onclick="submitRecharge()" class="w-full bg-blue-600 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-blue-900/40">Sync Deposit</button>
+        </div>
+    </div>
 
-            const countdown = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer').innerText = `00:${timeLeft.toString().padStart(2,'0')}`;
-                if(timeLeft % 4 === 0) logBox.innerHTML += `<p>> Trade Pair Found...</p>`;
-                if (timeLeft <= 0) { 
-                    clearInterval(countdown); 
-                    finishTask(rate, d.tasksLeft ?? 5); 
-                }
-            }, 1000);
-        };
+    <div class="mt-8 text-center p-4">
+        <p class="text-[10px] text-gray-600">Encountered an issue?</p>
+        <button class="text-green-500 text-[10px] font-bold uppercase mt-1">Contact Node Support (WhatsApp)</button>
+    </div>
 
-        async function finishTask(rate, tLeft) {
-            const userRef = doc(db, "users", auth.currentUser.uid);
-            const snap = await getDoc(userRef);
-            const profit = snap.data().balance * rate;
-            await updateDoc(userRef, { balance: snap.data().balance + profit, tasksLeft: tLeft - 1 });
-            document.getElementById('task-overlay').classList.add('hidden');
-            updateUI(auth.currentUser.uid);
+    <script>
+        function submitRecharge() {
+            const code = document.getElementById('m-pesa-code').value;
+            if(code.length < 8) {
+                alert("Please enter a valid M-Pesa Transaction Code.");
+                return;
+            }
+            // In the final version, this will save to the "recharges" collection in Firebase
+            alert("Verification Sent! Your node balance will update as soon as the block is confirmed.");
         }
-
-        window.openWithdraw = () => document.getElementById('modal-withdraw').classList.remove('hidden');
-        window.closeWithdraw = () => document.getElementById('modal-withdraw').classList.add('hidden');
-
-        window.submitWithdraw = async () => {
-            const amt = parseFloat(document.getElementById('w-amount').value);
-            const userRef = doc(db, "users", auth.currentUser.uid);
-            const snap = await getDoc(userRef);
-            if(amt < 100 || snap.data().balance < amt) return alert("Invalid amount/Min $100");
-
-            await updateDoc(userRef, { balance: snap.data().balance - amt });
-            await addDoc(collection(db, "withdrawals"), { phone: snap.data().phone, amt: amt, time: new Date().toLocaleString() });
-            alert("Transfer Queued.");
-            closeWithdraw();
-            updateUI(auth.currentUser.uid);
-        };
-
-        onAuthStateChanged(auth, (u) => { if(u) updateUI(u.uid); });
     </script>
 </body>
 </html>
